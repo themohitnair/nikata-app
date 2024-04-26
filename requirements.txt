@@ -1,1 +1,9 @@
-flet==0.22.*
+certifi==2024.2.2
+charset-normalizer==3.3.2
+docutils==0.21.2
+idna==3.7
+kivy==2.3.0
+kivy-garden==0.1.5
+pygments==2.17.2
+requests==2.31.0
+urllib3==2.2.1
