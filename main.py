@@ -2,16 +2,6 @@ import flet as ft
 
 title = 'Nikata'
 
-class Home(ft.UserControl):
-    def build(self):
-        self.name = ft.TextField(hint_text='Enter your name')
-
-class CID(ft.UserControl):
-    def __init__(self, CID, delete_CID):
-        super().__init__()
-        self.CID = CID
-        self.delete_CID = delete_CID
-
 def main(page: ft.Page):
     page.theme_mode = 'dark'
     page.title = title
