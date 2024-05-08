@@ -19,8 +19,6 @@ class _InformedPageState extends State<InformedPage> {
     // Fetch from database
   }
 
-  bool isValidChatID(String ChatID)
-
   void addChatID(String chatID) {
     if (chatID != '') {
       setState(() {
