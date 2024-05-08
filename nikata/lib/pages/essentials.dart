@@ -82,3 +82,48 @@ class NewGeofenceForm extends StatelessWidget {
     );
   }
 }
+
+class customTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String labelText;
+
+  const customTextField({
+    Key? key,
+    required this.controller,
+    required this.labelText,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      child: TextField(
+        style: TextStyle(
+          color: Colors.yellow,
+          fontFamily: 'FiraCode',
+        ),
+        controller: controller,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(
+            color: Colors.green,
+            fontFamily: 'FiraCode',
+            letterSpacing: -0.5,
+          ),
+          labelText: labelText,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: Colors.yellow)
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: Colors.red)
+          ),
+          floatingLabelAlignment: FloatingLabelAlignment.center,
+          floatingLabelStyle: TextStyle(
+            color: Colors.yellow,
+          ),
+        ),
+      ),
+    );
+  }
+}

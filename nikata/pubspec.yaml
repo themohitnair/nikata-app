@@ -12,6 +12,7 @@ dependencies:
   geolocator: ^9.0.2
   flutter:
     sdk: flutter
+  shared_preferences: ^2.0.17
   flutter_svg: ^0.22.0
   provider: ^6.0.0
 

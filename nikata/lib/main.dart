@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
       
         appBar: mainPageAppBar(
           color: Colors.yellow,
-          imageheight: 25,
+          imageheight: 30,
         ),
         drawer: Drawer(
           backgroundColor: Colors.grey[900],
