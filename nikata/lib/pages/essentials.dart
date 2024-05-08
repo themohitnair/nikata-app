@@ -55,25 +55,6 @@ class mainPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-ListTile DrawerListTile(IconData icon, String title, Function() onTap, Color color) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: color
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: color,
-          fontFamily: 'FiraCode',
-          letterSpacing: 0,
-          fontWeight: FontWeight.bold
-        )
-      ),
-      onTap: onTap,
-    );
-  }
-
 class NewGeofenceForm extends StatelessWidget {
   const NewGeofenceForm({super.key});
 

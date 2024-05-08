@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.ACCESS\_FINE\_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS\_COARSE\_LOCATION" />
     <application
         android:label="nikata"
         android:name="${applicationName}"
