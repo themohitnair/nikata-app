@@ -55,74 +55,63 @@ class mainPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class NewGeofenceForm extends StatelessWidget {
-  const NewGeofenceForm({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.3),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 0),
-            child: Container(
-              height: 175,
-              decoration: BoxDecoration(
-                color: Colors.grey[700],
-                borderRadius: BorderRadius.circular(20)
-              ),
-              
-            ),
-          ),
-        ],
-      )
-
-    );
-  }
-}
-
-class customTextField extends StatelessWidget {
+class customTextField extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
+  final FormFieldValidator<String>? validator;
 
   const customTextField({
     Key? key,
     required this.controller,
     required this.labelText,
+    this.validator,
   }) : super(key: key);
 
+  @override
+  State<customTextField> createState() => _customTextFieldState();
+}
+
+class _customTextFieldState extends State<customTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: TextField(
+      child: TextFormField(
+        keyboardType: TextInputType.phone,
+        autocorrect: false,
+        cursorColor: Colors.yellow,
         style: TextStyle(
           color: Colors.yellow,
           fontFamily: 'FiraCode',
         ),
-        controller: controller,
+        controller: widget.controller,
         decoration: InputDecoration(
           labelStyle: TextStyle(
             color: Colors.green,
             fontFamily: 'FiraCode',
             letterSpacing: -0.5,
           ),
-          labelText: labelText,
+          labelText: widget.labelText,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: Colors.yellow)
+            borderSide: BorderSide(
+              color: Colors.yellow
+            ),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: Colors.red)
+            borderSide: BorderSide(color: Colors.red),
           ),
           floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelStyle: TextStyle(
             color: Colors.yellow,
           ),
+          errorStyle: TextStyle(
+            color: Colors.red,
+            fontFamily: 'FiraCode',
+          ),
         ),
+        validator: widget.validator,
       ),
     );
   }

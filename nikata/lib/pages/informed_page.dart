@@ -10,8 +10,9 @@ class InformedPage extends StatefulWidget {
 }
 
 class _InformedPageState extends State<InformedPage> {
-
   List<String> chatIDList = [];
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController chatIDFieldController = TextEditingController();
 
   @override
   void initState() {
@@ -19,8 +20,15 @@ class _InformedPageState extends State<InformedPage> {
     // Fetch from database
   }
 
+  bool isValidChatID(String chatID) {
+    if (chatID == '') {
+      return false;
+    }
+    return ((int.tryParse(chatID) != null) && (chatID.length <= 10));
+  }
+
   void addChatID(String chatID) {
-    if (chatID != '') {
+    if (isValidChatID(chatID)) {
       setState(() {
         chatIDList.add(chatID);
         chatIDFieldController.clear();
@@ -29,20 +37,18 @@ class _InformedPageState extends State<InformedPage> {
     }
   }
 
-  void deleteChatID(int index) {    
+  void deleteChatID(int index) {
     setState(() {
       chatIDList.removeAt(index);
       // deposit in database
-    });  
+    });
   }
-
-  TextEditingController chatIDFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: sidePageAppBar(
-        title: 'Informed'
+        title: 'Informed',
       ),
       body: Column(
         children: [
@@ -56,27 +62,38 @@ class _InformedPageState extends State<InformedPage> {
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 letterSpacing: -0.5,
-              )
+              ),
             ),
           ),
-          customTextField(
-            controller: chatIDFieldController,
-            labelText: 'Enter a valid Telegram ChatID'
+          Form(
+            key: _formKey,
+            child: customTextField(
+              controller: chatIDFieldController,
+              labelText: 'Enter a valid Telegram ChatID',
+              validator: (value) {
+                if (!isValidChatID(value!)) {
+                  return 'Invalid ChatID';
+                }
+                return null;
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  highlightColor: Colors.black,
-                  onPressed: () {
-                    addChatID(chatIDFieldController.text);
-                  },                
-                  color: Colors.yellow,
-                  icon: Icon(Icons.add),
+            child: SizedBox(
+              width: 500,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.yellow,
                 ),
-              ],
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    addChatID(chatIDFieldController.text);
+                  }
+                },
+                child: Text('Add ChatID'),
+              ),
             ),
           ),
           Expanded(
@@ -89,17 +106,17 @@ class _InformedPageState extends State<InformedPage> {
                     trailing: IconButton(
                       icon: Icon(
                         Icons.delete,
-                        color: Colors.yellow
+                        color: Colors.yellow,
                       ),
                       onPressed: () {
                         deleteChatID(index);
-                      }
+                      },
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                       side: BorderSide(
-                        color: Colors.yellow
-                      )
+                        color: Colors.yellow,
+                      ),
                     ),
                     textColor: Colors.yellow,
                     tileColor: Colors.black,
@@ -109,7 +126,7 @@ class _InformedPageState extends State<InformedPage> {
                 );
               },
             ),
-          ),   
+          ),
         ],
       ),
       backgroundColor: Colors.grey[900],
