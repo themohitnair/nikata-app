@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nikata/pages/essentials.dart';
 
-class GeofencesPage extends StatefulWidget {
+class GeofencesPage extends StatelessWidget {
   const GeofencesPage({super.key});
 
-  @override
-  State<GeofencesPage> createState() => _GeofencesPageState();
-}
-
-class _GeofencesPageState extends State<GeofencesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

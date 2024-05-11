@@ -1,94 +1,107 @@
 import 'package:flutter/material.dart';
-
-final _formKey = GlobalKey<FormState>();
+import 'package:nikata/pages/essentials.dart';
 
 class AddNewGeofenceForm extends StatelessWidget {
-  const AddNewGeofenceForm({super.key});
+  AddNewGeofenceForm({Key? key}) : super(key: key);
+
+  final _formKey = GlobalKey<FormState>();
+  final _geonameController = TextEditingController();
+  final _radiusController = TextEditingController();
 
   bool isValidGeofenceName(String? geoname) {
-    return ((geoname != null) && (geoname == '') && (geoname.length > 30));
+    return geoname != null && geoname.isNotEmpty && geoname.length <= 30;
   }
 
   bool isValidGeofenceRadius(String radius) {
     int? rad = int.tryParse(radius);
-    if (rad == null) {
-      return false;
-    }
-    return (rad < 3214);
+    return rad != null && rad < 3214;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      body: Form(
-        key: _formKey,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  validator: (value) {
-                    if (!isValidGeofenceName(value)) {
-                      return 'Geofence name must be less than 30 characters in length and must not be left empty';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Geofence Name',
-                    hintStyle: TextStyle(
-                      color: Colors.green,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.yellow
-                      )
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _geonameController,
+                      validator: (value) {
+                        if (!isValidGeofenceName(value)) {
+                          return 'Geofence name must be less than 30 characters and not empty';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Geofence Name',
+                        hintStyle: TextStyle(
+                          color: Colors.green,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.yellow,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.yellow,
+                          ),
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'FiraCode',
                         color: Colors.yellow,
                       ),
                     ),
-                  ),
-                  style: TextStyle(
-                    fontFamily: 'FiraCode',
-                    color: Colors.yellow,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    hintText: 'Radius',
-                    hintStyle: TextStyle(
-                      color: Colors.green,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.yellow
-                      )
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
+                    SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _radiusController,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (!isValidGeofenceRadius(value ?? '')) {
+                          return 'Invalid radius';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Radius',
+                        hintStyle: TextStyle(
+                          color: Colors.green,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.yellow,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.yellow,
+                          ),
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'FiraCode',
                         color: Colors.yellow,
                       ),
                     ),
-                  ),
-                  style: TextStyle(
-                    fontFamily: 'FiraCode',
-                    color: Colors.yellow,
-                  ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Container(
+                height: 450,
+                child: SelectorMap(
+                  radiusController: _radiusController,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
