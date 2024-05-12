@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:nikata/pages/essentials.dart';
 
-class AddNewGeofenceForm extends StatelessWidget {
+class AddNewGeofenceForm extends StatefulWidget {
   AddNewGeofenceForm({Key? key}) : super(key: key);
 
+  @override
+  State<AddNewGeofenceForm> createState() => _AddNewGeofenceFormState();
+}
+
+class _AddNewGeofenceFormState extends State<AddNewGeofenceForm> {
   final _formKey = GlobalKey<FormState>();
+
   final _geonameController = TextEditingController();
+
   final _radiusController = TextEditingController();
+
+  LatLng _selectedLocation = LatLng(0, 0);
 
   bool isValidGeofenceName(String? geoname) {
     return geoname != null && geoname.isNotEmpty && geoname.length <= 30;
@@ -18,16 +28,22 @@ class AddNewGeofenceForm extends StatelessWidget {
     return ((rad != null) && (rad < 321400));
   }
 
+  void _updateSelectedLocation(LatLng newLocation) {
+    setState(() {
+      _selectedLocation = newLocation;
+    });
+  }
+
   void _submitForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      // Form is valid, process the data
       String geoname = _geonameController.text;
       String radius = _radiusController.text;
-      // You can handle form submission here, e.g., save data to database
-      // Reset text controllers after submission if needed
+
+      print('Geofence name: $geoname\nCenter: $_selectedLocation\nRadius: $radius');
+      // save data to database
       _geonameController.clear();
       _radiusController.clear();
-      // Show a success message or navigate to another screen
+      // Show a success message 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Geofence added successfully!'),
@@ -88,7 +104,7 @@ class AddNewGeofenceForm extends StatelessWidget {
                   color: Colors.yellow,
                 ),
               ),
-              SizedBox(height: 10), // Add spacing between fields
+              SizedBox(height: 10),
               TextFormField(
                 controller: _radiusController,
                 keyboardType: TextInputType.number,
@@ -136,6 +152,7 @@ class AddNewGeofenceForm extends StatelessWidget {
                   height: 400,
                   child: SelectorMap(
                     radiusController: _radiusController,
+                    onLocationChanged: _updateSelectedLocation,
                   ),
                 ),
               ),

@@ -125,8 +125,9 @@ class _customTextFieldState extends State<customTextField> {
 
 
 class SelectorMap extends StatefulWidget {
-  const SelectorMap({super.key, required this.radiusController});
+  const SelectorMap({super.key, required this.radiusController, required this.onLocationChanged});
   final TextEditingController radiusController;
+  final void Function(LatLng) onLocationChanged;
 
   @override
   State<SelectorMap> createState() => _SelectorMapState();
@@ -164,6 +165,7 @@ class _SelectorMapState extends State<SelectorMap> {
       }
 
       Position position = await Geolocator.getCurrentPosition();
+      if (!mounted) return;
       setState(() {
         _userLocation = LatLng(position.latitude, position.longitude);
       });
@@ -195,6 +197,7 @@ class _SelectorMapState extends State<SelectorMap> {
             setState(() {
               _selectedLocation = LatLng(point.latitude, point.longitude); 
             });
+            widget.onLocationChanged(_selectedLocation);
           },
         ),
         children: [
@@ -240,3 +243,16 @@ class _SelectorMapState extends State<SelectorMap> {
     );
   }
 }
+
+class Geofence {
+  final String geoname;
+  final LatLng centre;
+  final int radius;
+
+  Geofence({
+    required this.geoname,
+    required this.centre,
+    required this.radius
+  });
+}
+

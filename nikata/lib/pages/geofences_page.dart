@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nikata/pages/essentials.dart';
 
+
 class GeofencesPage extends StatelessWidget {
   const GeofencesPage({super.key});
 

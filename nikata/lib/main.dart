@@ -52,8 +52,9 @@ class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
   final List _pages = [
+    AddNewGeofenceForm(),
     GeofencesPage() ,
-    AddNewGeofenceForm()
+    
   ];
 
   void _navigateBottomBar(int index) {
@@ -119,7 +120,14 @@ class _MyAppState extends State<MyApp> {
             fontWeight: FontWeight.normal,
             fontSize: 11
           ),
-          items: [
+          items: [            
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.add_location_sharp,
+                color: Colors.yellow
+              ),
+              label: 'Add Geofence'
+            ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.explore_sharp,
@@ -127,13 +135,6 @@ class _MyAppState extends State<MyApp> {
               ),
               label: 'Your Geofences'
             ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.add_location_sharp,
-                color: Colors.yellow
-              ),
-              label: 'Add Geofence'
-            )
           ],
         ),
         body: _pages[_selectedIndex]
