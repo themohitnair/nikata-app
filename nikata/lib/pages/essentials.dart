@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
@@ -122,157 +123,120 @@ class _customTextFieldState extends State<customTextField> {
   }
 }
 
+
 class SelectorMap extends StatefulWidget {
+  const SelectorMap({super.key, required this.radiusController});
   final TextEditingController radiusController;
 
-  const SelectorMap({Key? key, required this.radiusController}) : super(key: key);
-
   @override
-  _SelectorMapState createState() => _SelectorMapState();
+  State<SelectorMap> createState() => _SelectorMapState();
 }
 
 class _SelectorMapState extends State<SelectorMap> {
-  final MapController _mapController = MapController();
-  LatLng _selectedCoordinates = LatLng(0, 0);
   LatLng _userLocation = LatLng(0, 0);
-  late Timer _locationUpdateTimer;
+  LatLng _selectedLocation = LatLng(0, 0);
+  late MapController _mapController = MapController();
+  Timer? _locationTimer;
 
   @override
   void initState() {
     super.initState();
-    _checkLocationServiceAndPermission();
-    _startLocationUpdates();
+    _getUserLocation().then((_) {
+      _mapController.move(_userLocation, 15.0);
+      _startLocationUpdates();
+      _selectedLocation = _userLocation;  // Initialize _selectedLocation
+    });
   }
 
   @override
   void dispose() {
-    _locationUpdateTimer.cancel();
     super.dispose();
+    _locationTimer?.cancel();
   }
 
-  Future<void> _checkLocationServiceAndPermission() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      _showLocationServiceDialog();
-    } else {
-      _requestLocationPermission();
-    }
-  }
-
-  Future<void> _requestLocationPermission() async {
-    final PermissionStatus permissionStatus = await Permission.location.request();
-    if (permissionStatus.isGranted) {
-      _getCurrentLocation();
-    } else {
-      print('Location permission denied');
-    }
-  }
-
-  Future<void> _getCurrentLocation() async {
+  Future<void> _getUserLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-        forceAndroidLocationManager: true,
-      );
+      LocationPermission permission = await Geolocator.requestPermission();
 
+      if (permission == LocationPermission.denied) {
+        // Handle case when user denies location permission
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
       setState(() {
         _userLocation = LatLng(position.latitude, position.longitude);
-        _selectedCoordinates = _userLocation;
       });
-    } catch (e) {
-      print('Error getting location: $e');
+    } on PlatformException catch (e) {
+      // Handle platform exceptions
+      print("Error: ${e.message}");
     }
-  }
-
-  void _setMapCenter(LatLng center) {
-    _mapController.move(center, 13.0);
   }
 
   void _startLocationUpdates() {
-    const updateInterval = Duration(seconds: 10); // Define the interval for location updates
-    _locationUpdateTimer = Timer.periodic(updateInterval, (Timer timer) {
-      _getCurrentLocation(); // Fetch the user's current location periodically
+    _locationTimer = Timer.periodic(Duration(seconds: 10), (_) async {
+      await _getUserLocation();
     });
   }
 
-  void _showLocationServiceDialog() {
-    showDialog(
-      barrierColor: Colors.grey[700],
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Location Service Disabled'),
-        content: Text('Please enable location services to use this feature.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Geolocator.openLocationSettings();
-            },
-            child: Text('Open Settings'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     double radius = double.tryParse(widget.radiusController.text) ?? 0.0;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20), // Adjust the value to control the corner radius
+      borderRadius: BorderRadius.circular(25),
       child: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
-          initialCenter: _selectedCoordinates,
-          initialZoom: 13.0,
+          initialCenter: _userLocation,
+          initialZoom: 15,
           onTap: (tapPosition, point) {
             setState(() {
-              _selectedCoordinates = point;
+              _selectedLocation = LatLng(point.latitude, point.longitude); 
             });
           },
         ),
         children: [
+          
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
             subdomains: ['a', 'b', 'c'],
-          ),
-          CircleLayer(
-            circles: [
-              CircleMarker(
-                point: _selectedCoordinates,
-                radius: radius,
-                color: Colors.transparent,
-                borderColor: Colors.blue,
-                borderStrokeWidth: 2,
-                useRadiusInMeter: true,
-              )
-            ],
           ),
           MarkerLayer(
             markers: [
               Marker(
-                point: _selectedCoordinates,
-                width: 50,
-                height: 50,
+                point: _userLocation, 
                 child: Icon(
-                  Icons.location_on,
-                  color: Colors.red,
-                ),
+                  Icons.location_searching_sharp,
+                  color: Colors.purple
+                )
               ),
               Marker(
-                point: _userLocation,
-                width: 40,
-                height: 40,
+                point: _selectedLocation,
                 child: Icon(
-                  Icons.person_pin,
-                  color: Colors.green,
-                ),
-              ),
-            ],
+                  Icons.circle,
+                  color: Colors.red,
+                  size: 10
+                )
+              )
+            ]
           ),
+          CircleLayer(
+            circles: [
+              CircleMarker(
+                point: _selectedLocation, 
+                radius: radius,
+                color: Colors.transparent,
+                borderColor: Colors.red[200] ?? Colors.blue,
+                borderStrokeWidth: 2,
+                useRadiusInMeter: true
+              )
+            ]
+          )
+
         ],
-      ),
+      )
     );
   }
 }

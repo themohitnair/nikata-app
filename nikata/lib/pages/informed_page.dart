@@ -81,7 +81,7 @@ class _InformedPageState extends State<InformedPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: SizedBox(
-              width: 500,
+              width: double.maxFinite,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
